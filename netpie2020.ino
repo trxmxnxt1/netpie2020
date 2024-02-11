@@ -40,7 +40,6 @@ void reconnect() {
       client.subscribe("@msg/timer/setHr");
       client.subscribe("@msg/timer/setMinute");
       client.subscribe("@msg/timer/setSec");
-      client.subscribe("@msg/timer/onSet");
     }
     else {
       Serial.print("failed, rc=");
@@ -60,29 +59,20 @@ void callback(char* topic, byte* payload, unsigned int length) {
     message = message + (char)payload[i];
   }
 
-  if (strcmp(topic, "@msg/timer/onSet") == 0) {
-    if (message == "on") {
-      onSet = 1;
-    } else {
-      onSet = 0;
-    }
+  if (strcmp(topic, "@msg/timer/setHr") == 0) {
+    setHour == message.toInt();
+    Serial.println(setHour);
   }
-
-  if (onSet) {
-    if (strcmp(topic, "@msg/timer/setHr") == 0) {
-      setHour += message.toInt();
-      Serial.println(setHour);
-    }
-    if (strcmp(topic, "@msg/timer/setMinute") == 0) {
-      setMinute += message.toInt();
-      Serial.println(setMinute);
-    }
-    if (strcmp(topic, "@msg/timer/setSec") == 0) {
-      setSec += message.toInt();
-      Serial.println(setSec);
-    }
+  if (strcmp(topic, "@msg/timer/setMinute") == 0) {
+    setMinute == message.toInt();
+    Serial.println(setMinute);
+  }
+  if (strcmp(topic, "@msg/timer/setSec") == 0) {
+    setSec == message.toInt();
+    Serial.println(setSec);
   }
 }
+
 
 void setup() {
   Serial.begin(115200);
@@ -142,6 +132,6 @@ void relayControl() {
   }
 }
 
-int timeInSec(int hr, int minute, int sec){
+int timeInSec(int hr, int minute, int sec) {
   return hr * 3600 + minute * 60 + sec;
 }
